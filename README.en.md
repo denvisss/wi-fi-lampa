@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="docs/logo.svg" width="88" height="88" alt="Lampa">
+  <img src="docs/logo.svg" width="88" height="88" alt="Wi-Fi Lamp">
 </p>
 
-<h1 align="center">Lampa</h1>
+<h1 align="center">Wi-Fi Lamp</h1>
 
 <p align="center">
   <b>Light that wakes up with you</b><br>
@@ -14,7 +14,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/github/v/release/denvisss/lampa?style=flat-square&label=release&color=59E3A7" alt="Release">
+  <img src="https://img.shields.io/github/v/release/denvisss/wi-fi-lampa?style=flat-square&label=release&color=59E3A7" alt="Release">
   <img src="https://img.shields.io/badge/PlatformIO-ESP8266-E7352C?style=flat-square&logo=platformio&logoColor=white" alt="PlatformIO">
   <img src="https://img.shields.io/badge/FastLED-3.7-FF6B35?style=flat-square" alt="FastLED">
   <img src="https://img.shields.io/badge/Android-8.0%2B-3DDC84?style=flat-square&logo=android&logoColor=white" alt="Android">
@@ -26,7 +26,7 @@
 
 ---
 
-**Lampa** is a complete smart lamp project: a flexible 16×16 WS2812B matrix is wrapped around a tube, with an ESP8266 inside. The firmware renders 17 scenes, wakes you gently with a sunrise on schedule, shows the time as a scrolling marquee and greets the New Year with fireworks. Control it with the touch button, a Material 3 Android app or a web panel that lives right in the lamp's memory. Both the firmware and the app update straight from GitHub.
+**Wi-Fi Lamp** is a complete smart lamp project: a flexible 16×16 WS2812B matrix is wrapped around a tube, with an ESP8266 inside. The firmware renders 17 scenes, wakes you gently with a sunrise on schedule, shows the time as a scrolling marquee and greets the New Year with fireworks. Control it with the touch button, a Material 3 Android app or a web panel that lives right in the lamp's memory. Both the firmware and the app update straight from GitHub.
 
 ## Features
 
@@ -107,6 +107,83 @@ Dark theme and the first-run portal:
   <img src="docs/screenshots/mobile-home-dark.png" width="220" alt="Dark theme">
 </p>
 
+## Hardware
+
+![Wiring diagram](docs/wiring-en.svg)
+
+![Project components](docs/components.svg)
+
+| Component | Qty | Purpose |
+| --- | --- | --- |
+| ESP8266 NodeMCU v2/v3, 4 MB | 1 | Wi-Fi, effects, API |
+| WS2812B 16×16 flexible matrix | 1 | 256 RGB LEDs |
+| TTP223 touch sensor | 1 | tap, double tap, hold |
+| 330–470 Ω resistor | 1 | data line termination |
+| 1000 µF capacitor | 1 | smooths current spikes at the matrix |
+| 74AHCT125 | 1 | 3.3 → 5 V level shifter, optional |
+| 5 V 10–15 A power supply | 1 | powers the matrix |
+| DC jack, terminal block, wires | — | assembly |
+
+Shopping links (Russia / China) will be added here later.
+
+The essentials: never power the matrix from the board — full-brightness white draws up to 15 A. Wiring — DIN → D4 (GPIO2) via a 330–470 Ω resistor, sensor — OUT → D2 (GPIO4), common ground is mandatory. The firmware limits total current via the "Power" setting (500–15000 mA): if your supply is weaker than 15 A, set its rating — the lamp dims bright scenes instead of tripping the supply.
+
+## Quick start
+
+You don't need to build anything. Everything ready-made is in the [releases](https://github.com/denvisss/wi-fi-lampa/releases):
+
+- **`lampa-full.bin`** — complete image: firmware + web UI, 4 MB;
+- **`lampa-android.apk`** — the Android app.
+
+### 1. Flash the board
+
+**Web flasher** — no software to install, Chrome or Edge required:
+
+1. Connect the board over USB. If no port shows up, install the CH340 driver.
+2. Open [esptool.spacehuhn.com](https://esptool.spacehuhn.com/) and press **Connect**, pick the port.
+3. Press **Choose file** and select `lampa-full.bin`. Keep the address at `0x0`.
+4. **Program** → wait for success (1–3 minutes). The board reboots by itself.
+
+**Flash Download Tool** — Espressif's Windows utility:
+
+1. Download [Flash Download Tools](https://www.espressif.com/en/support/download/other-tools) and launch it.
+2. ChipType — **ESP8266**, WorkMode — **Develop**, LoadMode — **UART**.
+3. File `lampa-full.bin`, address **0x0**, SPI SPEED — **40MHz**, SPI MODE — **DIO**, FLASH SIZE — **32Mbit**.
+4. COM port → **START** → wait for `FINISH`, then power-cycle.
+
+Detailed instructions, drivers and split flashing (`firmware.bin` + `littlefs.bin`) — in [docs/flash.md](docs/flash.md) (Russian).
+
+### 2. Set up Wi-Fi
+
+1. After flashing the lamp raises an open **Lampa-Setup** network.
+2. Join it from your phone — the setup page opens automatically (or go to `http://192.168.4.1`).
+3. Pick your home network, enter the password and press "Connect" — the lamp reboots.
+
+### 3. Open the web panel
+
+`http://lampa.local` in a browser, or the lamp's IP from the router's client list. Sections: "Overview" — effect, brightness, color; "Effects" — the 17-scene catalog; "Alarm" — sunrises; "Clock" — time, time zone and manual setting; "Settings" — matrix calibration, current limit, Wi-Fi and updates.
+
+### 4. Connect the app
+
+1. Install `lampa-android.apk` (Android 8.0+, allow installing from this source).
+2. On the "Connect to the lamp" screen the address is already filled in — `lampa.local`; press "Connect". If mDNS doesn't work in your network, type the lamp's IP.
+3. Tabs: "Home" — brightness and the live 16×16 preview, "Effects", "Sunrise" — alarms with a test run, "Clock", "Settings" — calibration, power, Wi-Fi, firmware, app, reset.
+
+### 5. Stay updated from GitHub
+
+"Settings → Firmware → Check" — the lamp updates itself from GitHub, settings are kept. "Settings → App → Check" — a fresh APK. No manual builds needed.
+
+For development — `npm run embed`, then `pio run -t upload` and `pio run -t uploadfs` inside `firmware` (see [Development](#development)).
+
+## Firmware updates
+
+1. **From GitHub** — "Settings → Firmware → Check" in the web panel or the app; the lamp shows the version and notes, installs on a button press and reboots.
+2. **From a file** — "Choose firmware file": any `firmware.bin` works.
+3. **Over the air from the console** — `pio run -t upload --upload-protocol espota --upload-port lampa.local`.
+4. **USB flasher** — `lampa-full.bin` at address `0x0` (see [Quick start](#quick-start)).
+
+The Android app updates itself: "Settings → App → Check" downloads the APK from the release.
+
 ## How it works
 
 ```mermaid
@@ -128,44 +205,6 @@ flowchart LR
 The firmware is a small real-time core: a 16 ms tick, crossfaded scene changes, a sunrise layer on top of effects and a network state broadcast to all clients at once. The web UI and the Android app keep no state of their own — the lamp is the single source of truth.
 
 The time zone table (IANA → POSIX) lives in flash and is generated by `tools/gen-tz.mjs`; the lamp serves the zone list itself, so clients need no copies.
-
-## Hardware
-
-| Component | Connection |
-| --- | --- |
-| WS2812B 16×16 matrix | DIN → D4 (GPIO2) via a 330–470 Ω resistor |
-| TTP223 touch sensor | OUT → D2 (GPIO4), 3.3 V supply |
-| LED power | external 5 V 10–15 A supply, common ground |
-
-Don't power the matrix from the board: full-brightness white draws up to 15 A. Full wiring diagram, level shifter, capacitors and airflow — in [docs/wiring.md](docs/wiring.md) (Russian).
-
-A 74AHCT125 between D4 and the strip is recommended: the ESP outputs 3.3 V while WS2812B is happier with 5 V. The firmware limits total current via the "Power" setting (500–15000 mA): if your supply is weaker than 15 A, set its rating — the lamp dims bright scenes instead of tripping the supply.
-
-## Quick start
-
-```bash
-# 1. Embed the web UI into the firmware
-npm run embed
-
-# 2. Flash the board over USB
-cd firmware
-pio run -t upload
-pio run -t uploadfs
-```
-
-1. Join the open `Lampa-Setup` network, pick your home Wi-Fi on the setup page.
-2. Open [http://lampa.local](http://lampa.local) or the address from your router.
-3. Build the app: `cd android && ./gradlew assembleDebug`, install `app/build/outputs/apk/debug/app-debug.apk` — it finds the lamp via mDNS.
-
-Details: [flashing and first run](docs/flash.md), [API](docs/api.md) (Russian).
-
-## Firmware updates
-
-1. **From GitHub** — "Settings → Firmware → Check" in the web panel or the app; the lamp shows the version and notes, installs on a button press and reboots.
-2. **From a file** — "Choose firmware file": any `firmware.bin` works.
-3. **Over the air from the console** — `pio run -t upload --upload-protocol espota --upload-port lampa.local`.
-
-The Android app updates itself: "Settings → App → Check" downloads the APK from the release.
 
 ## Development
 
@@ -190,6 +229,7 @@ JDK 17+ and Android SDK 35 required. Stack: Kotlin 2.0, Jetpack Compose, Materia
 ### Firmware
 
 ```bash
+npm run embed
 cd firmware
 pio run          # build
 pio run -t upload
@@ -236,7 +276,7 @@ WebSocket `ws://lampa.local:81/` delivers state, sunrise progress, OTA progress 
 
 ## Status
 
-Version 1.1.0-pre1 runs on a real lamp: Wi-Fi, clock with manual setting and all time zones, matrix calibration, current limiting, GitHub updates and EEPROM settings restore after filesystem formatting are verified on hardware. The web panel is tested in Chrome against the live lamp — from 390 px to desktop; the Android app is built and tested on an emulator against the live lamp: screens, live preview, alarms, clock and updates work.
+Version 1.2.0-pre1 runs on a real lamp: Wi-Fi, clock with manual setting and all time zones, matrix calibration, current limiting, GitHub updates and EEPROM settings restore after filesystem formatting are verified on hardware. The web panel is tested in Chrome against the live lamp — from 390 px to desktop; the Android app is built and tested on an emulator against the live lamp: screens, live preview, alarms, clock and updates work.
 
 ## License
 

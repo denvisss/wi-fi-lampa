@@ -81,7 +81,7 @@ fun ConnectScreen(vm: LampViewModel) {
             )
             Spacer(Modifier.width(14.dp))
             Column {
-                Text("Лампа", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                Text("Wi-Fi Лампа", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
                 Text(
                     "управление светом",
                     style = MaterialTheme.typography.bodySmall,

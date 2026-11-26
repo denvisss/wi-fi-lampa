@@ -17,7 +17,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Лампа"
+            android:text="Wi-Fi Лампа"
             android:textColor="#F4EFE6"
             android:textSize="16sp"
             android:textStyle="bold" />

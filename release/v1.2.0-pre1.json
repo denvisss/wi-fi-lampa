@@ -1,0 +1,6 @@
+{
+  "tag": "v1.2.0-pre1",
+  "name": "v1.2.0-pre1",
+  "prerelease": true,
+  "body": "## Русский\n\n- Проект переименован в **Wi-Fi Лампа**\n- Новый `lampa-full.bin`: прошивка и веб-интерфейс одним файлом — прошивается через веб-прошивальщик или Flash Download Tool\n- Схема подключения и список компонентов в README\n- Подробный быстрый старт: прошивка, веб-панель, Android-приложение\n\n## English\n\n- The project is now **Wi-Fi Lamp**\n- New `lampa-full.bin`: firmware and web UI in a single file — flash it with any web flasher or Flash Download Tool\n- Wiring diagram and component list in the README\n- Detailed quick start: flashing, web panel, Android app\n"
+}

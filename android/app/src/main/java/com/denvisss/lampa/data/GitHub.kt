@@ -27,7 +27,7 @@ data class GhRelease(
 )
 
 object GitHub {
-    private const val API = "https://api.github.com/repos/denvisss/lampa/releases?per_page=5"
+    private const val API = "https://api.github.com/repos/denvisss/wi-fi-lampa/releases?per_page=5"
 
     private val json = Json { ignoreUnknownKeys = true }
     private val http = OkHttpClient.Builder()

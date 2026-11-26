@@ -44,9 +44,14 @@ jobs:
 
       - name: Build firmware
         run: |
-          pip install platformio
+          pip install platformio esptool
           pio run -d firmware
+          pio run -d firmware -t buildfs
           cp firmware/.pio/build/lampa/firmware.bin firmware.bin
+          cp firmware/.pio/build/lampa/littlefs.bin littlefs.bin
+          python -m esptool --chip esp8266 merge_bin -o lampa-full.bin \
+            --flash_mode dio --flash_freq 40m --flash_size 4MB \
+            0x0 firmware.bin 0x200000 littlefs.bin
 
       - uses: actions/setup-java@v4
         with:
@@ -69,5 +74,6 @@ jobs:
           prerelease: ${{ steps.marker.outputs.prerelease == 'true' }}
           files: |
             firmware.bin
+            lampa-full.bin
             lampa-android.apk
           fail_on_unmatched_files: true

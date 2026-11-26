@@ -184,7 +184,7 @@ GET /api/update/check
 ```
 
 Если проверить не удалось (нет сети, GitHub недоступен), вернётся `200` с
-`"error"` и `current`. Лампа смотрит релизы `denvisss/lampa`, берёт первый
+`"error"` и `current`. Лампа смотрит релизы `denvisss/wi-fi-lampa`, берёт первый
 нечерновой и ищет в нём asset `firmware.bin`.
 
 ```json

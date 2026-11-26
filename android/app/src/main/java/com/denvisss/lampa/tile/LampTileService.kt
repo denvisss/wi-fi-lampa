@@ -30,7 +30,7 @@ class LampTileService : TileService() {
         }
         qsTile?.apply {
             state = Tile.STATE_INACTIVE
-            label = "Лампа"
+            label = "Wi-Fi Лампа"
             updateTile()
         }
         scope.launch {
@@ -69,7 +69,7 @@ class LampTileService : TileService() {
             power == false -> Tile.STATE_INACTIVE
             else -> Tile.STATE_UNAVAILABLE
         }
-        tile.label = "Лампа"
+        tile.label = "Wi-Fi Лампа"
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             tile.subtitle = when {
                 offline -> "нет связи"

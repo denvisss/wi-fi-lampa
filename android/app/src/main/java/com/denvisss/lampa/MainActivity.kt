@@ -183,7 +183,7 @@ private fun TopBar(vm: LampViewModel) {
                 )
         )
         Spacer(Modifier.width(8.dp))
-        Text("Лампа", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+        Text("Wi-Fi Лампа", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
         Spacer(Modifier.weight(1f))
         if (!vm.connected) {
             TextButton(onClick = { vm.retry() }, contentPadding = PaddingValues(horizontal = 10.dp)) {
