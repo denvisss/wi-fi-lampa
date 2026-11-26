@@ -67,10 +67,32 @@ fun effectBrush(id: String): Brush = when (id) {
     "fire" -> Brush.verticalGradient(listOf(Color(0xFF1B0700), Color(0xFF8A2A00), Color(0xFFFF8A3C)))
     "snowfall" -> Brush.verticalGradient(listOf(Color(0xFF2A3C55), Color(0xFF6E8AA8)))
     "garland" -> Brush.linearGradient(
-        listOf(Color(0xFF2B1B00), Color(0xFFC79A3A), Color(0xFF2B1B00), Color(0xFFC79A3A))
+        listOf(
+            Color(0xFF2B1B00), Color(0xFFFF2C2C), Color(0xFFFFD640), Color(0xFF34CD54),
+            Color(0xFF3080FF), Color(0xFFB05CFF), Color(0xFF2B1B00)
+        )
     )
     "spiral" -> Brush.linearGradient(listOf(Color(0xFF2B2100), Color(0xFFD6B24A), Color(0xFF2B2100)))
     "candy" -> Brush.linearGradient(listOf(Color(0xFFE8404F), Color(0xFFFFF3E4), Color(0xFFE8404F)))
+    "matrix" -> Brush.verticalGradient(listOf(Color(0xFF02130A), Color(0xFF0B4A24), Color(0xFF6BFFA8)))
+    "helix" -> Brush.linearGradient(
+        listOf(Color(0xFF2A1B0D), Color(0xFFFFB066), Color(0xFF2A1B0D), Color(0xFFFFF3DC))
+    )
+    "rings" -> Brush.radialGradient(listOf(Color(0xFFFFBF80), Color(0xFF1C1510)))
+    "beacon" -> Brush.linearGradient(listOf(Color(0xFF0B0906), Color(0xFFFFECBE), Color(0xFF0B0906)))
+    "lightning" -> Brush.linearGradient(
+        listOf(Color(0xFF0D1222), Color(0xFFB9C8FF), Color(0xFF0D1222))
+    )
+    "confetti" -> Brush.linearGradient(
+        listOf(
+            Color(0xFFFF6B6B), Color(0xFFFFD166), Color(0xFF59E3A7),
+            Color(0xFF4FC3F7), Color(0xFFB16BFF)
+        )
+    )
+    "hypno" -> Brush.linearGradient(listOf(Color(0xFF2B1A10), Color(0xFFFFB066), Color(0xFF2B1A10)))
+    "heartbeat" -> Brush.radialGradient(listOf(Color(0xFFFF5C66), Color(0xFFB3121F), Color(0xFF2A0509)))
+    "bubbles" -> Brush.verticalGradient(listOf(Color(0xFF0B1626), Color(0xFF35404E), Color(0xFFFFC48C)))
+    "snake" -> Brush.linearGradient(listOf(Color(0xFF08130D), Color(0xFF4FE3A0), Color(0xFF0A1A10)))
     "fireworks" -> Brush.radialGradient(listOf(Color(0xFF6A3AA8), Color(0xFF0B0820)))
     "clock" -> Brush.linearGradient(listOf(Color(0xFF3A2A12), Color(0xFFA87B45)))
     "nycountdown" -> Brush.linearGradient(listOf(Color(0xFF0A1633), Color(0xFF274B8F)))

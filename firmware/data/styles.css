@@ -310,10 +310,13 @@ input[type="range"]::-moz-range-thumb { width: 22px; height: 22px; border-radius
 }
 .art-garland {
   background:
-    radial-gradient(3px 3px at 16% 30%, #ffd27a 60%, transparent 61%),
-    radial-gradient(3px 3px at 40% 70%, #ffb066 60%, transparent 61%),
-    radial-gradient(3px 3px at 64% 26%, #ffe9b8 60%, transparent 61%),
-    radial-gradient(3px 3px at 86% 64%, #ffca7a 60%, transparent 61%),
+    radial-gradient(3px 3px at 12% 18%, #ffd27a 60%, transparent 61%),
+    radial-gradient(3px 3px at 34% 40%, #ff6b57 60%, transparent 61%),
+    radial-gradient(3px 3px at 56% 22%, #59e3a7 60%, transparent 61%),
+    radial-gradient(3px 3px at 78% 46%, #4fc3f7 60%, transparent 61%),
+    radial-gradient(3px 3px at 22% 70%, #b16bff 60%, transparent 61%),
+    radial-gradient(3px 3px at 66% 76%, #ffd27a 60%, transparent 61%),
+    radial-gradient(3px 3px at 88% 14%, #ff9f6e 60%, transparent 61%),
     linear-gradient(160deg, #12100a 0%, #231a10 100%);
 }
 .art-spiral {
@@ -345,6 +348,70 @@ input[type="range"]::-moz-range-thumb { width: 22px; height: 22px; border-radius
     radial-gradient(50px 50px at 30% 62%, rgba(255, 120, 160, .8) 0%, transparent 62%),
     radial-gradient(36px 36px at 80% 78%, rgba(120, 200, 255, .8) 0%, transparent 60%),
     linear-gradient(180deg, #160f1c 0%, #20121e 100%);
+}
+.art-matrix {
+  background:
+    linear-gradient(180deg, transparent 0%, #52ff9a 45%, transparent 100%) 16% 0/3px 62% no-repeat,
+    linear-gradient(180deg, transparent 0%, #8dffb8 42%, transparent 100%) 46% 0/2px 82% no-repeat,
+    linear-gradient(180deg, transparent 0%, #52ff9a 45%, transparent 100%) 71% 0/3px 54% no-repeat,
+    linear-gradient(180deg, transparent 0%, #2bff88 40%, transparent 100%) 87% 0/2px 72% no-repeat,
+    linear-gradient(180deg, #03130a 0%, #05230f 60%, #010806 100%);
+}
+.art-helix {
+  background:
+    repeating-linear-gradient(120deg, transparent 0 10px, #ffb066 10px 13px, transparent 13px 24px,
+      #fff3dc 24px 26px, transparent 26px 36px),
+    linear-gradient(160deg, #151008 0%, #241a0e 100%);
+}
+.art-rings {
+  background:
+    radial-gradient(circle at 50% 50%, transparent 10%, #ffbd7d 11% 13%, transparent 14% 24%,
+      #ffbd7d 25% 27%, transparent 28% 38%, #ffbd7d 39% 41%, transparent 42% 52%,
+      #ffbd7d 53% 55%, transparent 56%),
+    linear-gradient(180deg, #100d09 0%, #1c1610 100%);
+}
+.art-beacon {
+  background:
+    linear-gradient(90deg, transparent 0 44%, rgba(255, 236, 190, .9) 47% 53%, transparent 56%),
+    radial-gradient(120% 70% at 50% 0%, rgba(255, 236, 190, .35), transparent 60%),
+    linear-gradient(180deg, #241d10 0%, #0b0906 100%);
+}
+.art-lightning {
+  background:
+    linear-gradient(115deg, transparent 46%, #eaf2ff 47.5% 50%, transparent 51.5%),
+    radial-gradient(90% 60% at 50% 0%, rgba(120, 150, 255, .35), transparent 65%),
+    linear-gradient(180deg, #0d1222 0%, #141a2e 55%, #080b14 100%);
+}
+.art-confetti {
+  background:
+    radial-gradient(3px 3px at 18% 24%, #ff6b6b 60%, transparent 61%),
+    radial-gradient(3px 3px at 42% 58%, #ffd166 60%, transparent 61%),
+    radial-gradient(3px 3px at 68% 30%, #59e3a7 60%, transparent 61%),
+    radial-gradient(3px 3px at 82% 68%, #4fc3f7 60%, transparent 61%),
+    radial-gradient(3px 3px at 28% 80%, #b16bff 60%, transparent 61%),
+    radial-gradient(3px 3px at 58% 12%, #ff9f6e 60%, transparent 61%),
+    linear-gradient(160deg, #1d1030 0%, #120a1e 100%);
+}
+.art-hypno {
+  background: repeating-conic-gradient(from 0deg at 50% 50%, #ffb066 0deg 22deg, #2b1a10 22deg 44deg);
+}
+.art-heartbeat {
+  background: radial-gradient(60% 60% at 50% 52%, #ff5c66 0%, #b3121f 48%, #2a0509 82%);
+}
+.art-bubbles {
+  background:
+    radial-gradient(6px 6px at 28% 30%, rgba(255, 196, 140, .95) 55%, transparent 56%),
+    radial-gradient(4px 4px at 64% 48%, rgba(255, 196, 140, .75) 55%, transparent 56%),
+    radial-gradient(7px 7px at 46% 76%, rgba(255, 196, 140, .85) 55%, transparent 56%),
+    radial-gradient(3px 3px at 80% 22%, rgba(255, 196, 140, .6) 55%, transparent 56%),
+    linear-gradient(180deg, #0b1626 0%, #0e0c12 100%);
+}
+.art-snake {
+  background:
+    linear-gradient(90deg, transparent 0 22%, #4fe3a0 22% 34%, transparent 34% 44%, #7affc1 44% 56%,
+      transparent 56% 66%, #4fe3a0 66% 78%, transparent 78%) 0 62%/100% 6px no-repeat,
+    radial-gradient(4px 4px at 74% 30%, #ff4d57 60%, transparent 61%),
+    linear-gradient(180deg, #08130d 0%, #0a1a10 100%);
 }
 
 /* ---------- controls ---------- */

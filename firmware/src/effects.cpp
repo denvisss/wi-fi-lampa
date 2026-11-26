@@ -15,6 +15,19 @@ inline CRGB scaled(const CRGB& c, uint8_t k) {
 }
 inline uint8_t max3(const CRGB& c) { return max(c.r, max(c.g, c.b)); }
 
+// Тёмный акцентный цвет поднимаем к видимому уровню, сохраняя оттенок
+inline CRGB accentLift() {
+  CRGB c = colorNow();
+  const uint8_t m = max3(c);
+  if (m < 110) {
+    const uint8_t add = (uint8_t)((110 - m) / 2);
+    c.r = qadd8(c.r, add);
+    c.g = qadd8(c.g, add);
+    c.b = qadd8(c.b, add);
+  }
+  return c;
+}
+
 const char* const WD_RU[7] = {"\xC2\xD1", "\xCF\xCD", "\xC2\xD2", "\xD1\xD0",
                               "\xD7\xD2", "\xCF\xD2", "\xD1\xC1"};
 const char NY_MSG[] = "\xD1 \xCD\xCE\xC2\xDB\xCC \xC3\xCE\xC4\xCE\xCC! ";
@@ -182,6 +195,270 @@ class PlasmaEffect : public EffectBase {
   }
 };
 
+class MatrixEffect : public EffectBase {
+  struct Column {
+    float y;
+    float spd;
+    uint8_t len;
+    uint8_t seed;
+  };
+  Column cols[16];
+  bool init = false;
+
+ public:
+  MatrixEffect() : EffectBase("matrix", "Матричный дождь", GRP_ATMO, false, true, true) {}
+  void render(CRGB* fb, float dt, float) override {
+    if (!init) {
+      for (uint8_t x = 0; x < 16; x++) {
+        cols[x] = {random8(0, 48) / 2.0f - 8.0f, 3.5f + random8(0, 60) / 10.0f,
+                   (uint8_t)(4 + random8(0, 6)), random8()};
+      }
+      init = true;
+    }
+    fill_solid(fb, cfg::LED_COUNT, CRGB::Black);
+    const float sf = 0.4f + g.speed / 128.0f;
+    const uint8_t ib = (uint8_t)(190 + g.intensity / 3);
+    for (uint8_t x = 0; x < 16; x++) {
+      Column& c = cols[x];
+      const uint8_t fl = (uint8_t)(215 + random8(0, 40));
+      for (uint8_t k = 0; k < c.len; k++) {
+        const int yi = (int)c.y + k;
+        if (yi < 0 || yi >= 16) continue;
+        uint8_t kk = k == 0 ? 255 : (uint8_t)(235 - k * 25);
+        kk = scale8(kk, scale8(fl, ib));
+        const CRGB col = k == 0 ? CRGB(185, 255, 200)
+                                : CHSV((uint8_t)(96 + (c.seed & 7)), 255, 255);
+        fb[XY(x, (uint8_t)yi)] = scaled(col, kk);
+      }
+      c.y -= c.spd * dt * sf;
+      if (c.y < -(float)c.len - 2.0f) {
+        c.y = 16.0f + random8(0, 10) / 2.0f;
+        c.spd = 3.5f + random8(0, 60) / 10.0f;
+        c.len = (uint8_t)(4 + random8(0, 6));
+        c.seed = random8();
+      }
+    }
+  }
+};
+
+class HelixEffect : public EffectBase {
+ public:
+  HelixEffect() : EffectBase("helix", "Спираль", GRP_ATMO, true, true) {}
+  void render(CRGB* fb, float, float t) override {
+    const float sp = 0.4f + g.speed / 110.0f;
+    const int off = (int)(t * 14 * sp);
+    CRGB c1 = colorNow();
+    c1.r = qadd8(c1.r, 70);
+    c1.g = qadd8(c1.g, 70);
+    c1.b = qadd8(c1.b, 70);
+    const CRGB c2 = CRGB(255, 242, 214);
+    const CRGB c1dim = scaled(c1, 80);
+    const CRGB c2dim = scaled(c2, 80);
+    for (uint8_t x = 0; x < 16; x++) {
+      for (uint8_t y = 0; y < 16; y++) {
+        const uint8_t v = (uint8_t)((x + y + off) & 15);
+        CRGB col = CRGB(5, 4, 3);
+        if (v == 0) col = c1;
+        else if (v == 8) col = c2;
+        // соседние диоды — мягкое свечение нити
+        else if (v == 1 || v == 15) col = c1dim;
+        else if (v == 7 || v == 9) col = c2dim;
+        fb[XY(x, y)] = col;
+      }
+    }
+  }
+};
+
+class RingsEffect : public EffectBase {
+ public:
+  RingsEffect() : EffectBase("rings", "Кольца", GRP_ATMO, true, true) {}
+  void render(CRGB* fb, float, float t) override {
+    const float sp = 0.4f + g.speed / 110.0f;
+    const CRGB base = accentLift();
+    const int ph = (int)(t * 66 * sp);
+    for (uint8_t x = 0; x < 16; x++) {
+      const uint8_t wob = (uint8_t)((x * 5) & 7);
+      for (uint8_t y = 0; y < 16; y++) {
+        const uint8_t d = (uint8_t)(abs((int)y * 2 - 15) * 9);
+        const uint8_t v = sin8((uint8_t)(d * 2 - ph + wob));
+        CRGB col;
+        if (v > 205) col = CRGB(255, 240, 215);  // гребень кольца
+        else col = scaled(base, qadd8(10, v));
+        fb[XY(x, y)] = col;
+      }
+    }
+  }
+};
+
+class BeaconEffect : public EffectBase {
+ public:
+  BeaconEffect() : EffectBase("beacon", "Маяк", GRP_ATMO, false, true, true) {}
+  void render(CRGB* fb, float, float t) override {
+    const float sp = 0.3f + g.speed / 100.0f;
+    const float beam = fmodf(t * 2.4f * sp, 16.0f);
+    const uint8_t ib = (uint8_t)(200 + g.intensity / 3);
+    for (uint8_t x = 0; x < 16; x++) {
+      float d = fabsf((float)x - beam);
+      d = min(d, 16.0f - d);
+      uint8_t k = d < 1.0f ? 255 : d < 2.2f ? 130 : d < 3.4f ? 44 : 10;
+      k = scale8(k, ib);
+      for (uint8_t y = 0; y < 16; y++) {
+        const uint8_t ky = scale8(k, (uint8_t)(246 - y * 5));
+        fb[XY(x, y)] = scaled(CRGB(255, 248, 230), ky);
+      }
+    }
+  }
+};
+
+class LightningEffect : public EffectBase {
+  float localT = 0;
+  float nextAt = 1.2f;
+  float flashAt = -10.0f;
+  uint8_t bolt[16];
+
+  void strike() {
+    flashAt = localT;
+    uint8_t x = random8(2, 14);
+    for (uint8_t y = 0; y < 16; y++) {
+      bolt[y] = x;
+      x = (uint8_t)constrain((int)x + (int8_t)random8(3) - 1, 0, 15);
+    }
+  }
+
+ public:
+  LightningEffect() : EffectBase("lightning", "Молния", GRP_ATMO, false, true, true) {}
+  void enter() override {
+    localT = 0;
+    nextAt = 1.2f;
+    flashAt = -10.0f;
+  }
+  void render(CRGB* fb, float dt, float) override {
+    localT += dt;
+    const float iv = max(1.6f, 7.0f - g.speed / 55.0f);
+    if (localT > nextAt) {
+      strike();
+      nextAt = localT + iv + random8(0, 30) / 10.0f;
+    }
+    const float e = localT - flashAt;
+    float kf = e >= 0.0f ? expf(-e * 6.0f) : 0.0f;
+    if (e >= 0.10f) kf = max(kf, expf(-(e - 0.10f) * 8.0f) * 0.85f);
+    if (e >= 0.0f) kf = max(kf, 0.12f * expf(-e * 2.2f));  // послесвечение
+    const uint8_t k = (uint8_t)(min(1.0f, kf) * min(255.0f, 190.0f + g.intensity / 2));
+    const uint8_t amb = (uint8_t)(k / 6);
+    for (uint8_t y = 0; y < 16; y++) {
+      const uint8_t bx = bolt[y];
+      for (uint8_t x = 0; x < 16; x++) {
+        if (x == bx && k > 8) {
+          const uint8_t v = qadd8(amb, k);
+          fb[XY(x, y)] = CRGB(v, v, qadd8(v, 20));  // ядро молнии — белое
+        } else if (k > 150 && (x == (uint8_t)((bx + 1) & 15) || x == (uint8_t)((bx + 15) & 15))) {
+          const uint8_t v = qadd8(amb, k / 3);
+          fb[XY(x, y)] = CRGB(v, v, v);
+        } else {
+          fb[XY(x, y)] = CRGB(amb / 8, amb / 6, amb);  // голубое небо
+        }
+      }
+    }
+  }
+};
+
+class HypnoEffect : public EffectBase {
+ public:
+  HypnoEffect() : EffectBase("hypno", "Гипноз", GRP_ATMO, false, true, true) {}
+  void render(CRGB* fb, float, float t) override {
+    const float sp = 0.4f + g.speed / 120.0f;
+    const int spin = (int)(t * 46 * sp);
+    const uint8_t ib = (uint8_t)min(255.0f, 205.0f + g.intensity / 2);
+    for (uint8_t x = 0; x < 16; x++) {
+      for (uint8_t y = 0; y < 16; y++) {
+        const uint8_t d = (uint8_t)(abs((int)y * 2 - 15) * 8);
+        const uint8_t v = sin8((uint8_t)(x * 32 + d + spin));
+        const uint8_t k = (uint8_t)((uint16_t)v * ib / 255);
+        const uint8_t hue = (uint8_t)(150 + d / 2 + spin / 2);
+        fb[XY(x, y)] = v > 128 ? CHSV(hue, 230, k) : CHSV(hue, 230, 12);
+      }
+    }
+  }
+};
+
+class HeartbeatEffect : public EffectBase {
+ public:
+  HeartbeatEffect() : EffectBase("heartbeat", "Сердцебиение", GRP_ATMO, false, true, true) {}
+  void render(CRGB* fb, float, float t) override {
+    const float period = 1.35f - (g.speed / 255.0f) * 0.55f;
+    const float p = fmodf(t, period) / period;
+    float beat = p < 0.16f ? 1.0f - p / 0.16f : 0.0f;
+    if (p > 0.22f && p < 0.40f) beat = max(beat, (1.0f - (p - 0.22f) / 0.18f) * 0.8f);
+    const uint8_t peak = (uint8_t)(min(255.0f, (160.0f + g.intensity * 0.75f) * beat));
+    const CRGB core = CRGB(255, 42, 54);
+    for (uint8_t y = 0; y < 16; y++) {
+      const uint8_t w = (uint8_t)(255 - abs((int)y * 2 - 15) * 10);
+      const uint8_t k = qadd8(scale8(w, peak), 6);
+      for (uint8_t x = 0; x < 16; x++) {
+        fb[XY(x, y)] = scaled(core, k);
+      }
+    }
+  }
+};
+
+class BubblesEffect : public EffectBase {
+  struct Bubble {
+    float x;
+    float y;
+    float vy;
+    uint8_t ph;
+    uint8_t big;
+  };
+  Bubble bs[30];
+  bool init = false;
+
+ public:
+  BubblesEffect() : EffectBase("bubbles", "Пузырьки", GRP_ATMO, true, true, true) {}
+  void render(CRGB* fb, float dt, float t) override {
+    if (!init) {
+      for (uint8_t i = 0; i < 30; i++) {
+        bs[i] = {random8(0, 160) / 10.0f, random8(0, 160) / 10.0f,
+                 1.2f + random8(0, 30) / 10.0f, random8(), (uint8_t)(random8(4) == 0)};
+      }
+      init = true;
+    }
+    fill_solid(fb, cfg::LED_COUNT, CRGB(1, 2, 6));
+    const float sp = 0.4f + g.speed / 120.0f;
+    CRGB base = colorNow();
+    base.r = qadd8(base.r, 140);
+    base.g = qadd8(base.g, 140);
+    base.b = qadd8(base.b, 140);
+    const uint8_t ib = (uint8_t)(210 + g.intensity / 3);
+    for (uint8_t i = 0; i < 30; i++) {
+      Bubble& b = bs[i];
+      b.y += b.vy * dt * sp;
+      b.x += sinf(t * 1.7f + b.ph) * dt * 0.9f;
+      if (b.y > 16.6f) {
+        b.y = -1.0f;
+        b.x = random8(0, 160) / 10.0f;
+        b.vy = 1.2f + random8(0, 30) / 10.0f;
+        b.big = (uint8_t)(random8(4) == 0);
+      }
+      while (b.x < 0) b.x += 16.0f;
+      while (b.x >= 16.0f) b.x -= 16.0f;
+      const int xi = (int)b.x;
+      const int yi = (int)b.y;
+      if (yi < 0 || yi >= 16) continue;
+      const uint8_t pulse = qadd8(205, sin8((uint8_t)((int)(t * 55) + b.ph)) / 5);
+      const uint8_t k = scale8(pulse, ib);
+      fb[XY((uint8_t)xi, (uint8_t)yi)] = scaled(base, k);
+      if (b.big) {
+        const CRGB dim = scaled(base, k / 2);
+        if (xi + 1 < 16) fb[XY((uint8_t)(xi + 1), (uint8_t)yi)] = dim;
+        if (yi + 1 < 16) fb[XY((uint8_t)xi, (uint8_t)(yi + 1))] = dim;
+        if (xi + 1 < 16 && yi + 1 < 16)
+          fb[XY((uint8_t)(xi + 1), (uint8_t)(yi + 1))] = scaled(base, k / 3);
+        if (yi > 0) fb[XY((uint8_t)xi, (uint8_t)(yi - 1))] = scaled(CRGB(235, 245, 255), k);
+      }
+    }
+  }
+};
+
 class FireEffect : public EffectBase {
   uint8_t heat[256];
   bool init = false;
@@ -295,22 +572,27 @@ class GarlandEffect : public EffectBase {
  public:
   GarlandEffect() : EffectBase("garland", "Гирлянда", GRP_NY, false, true) {}
   void render(CRGB* fb, float, float t) override {
-    fill_solid(fb, cfg::LED_COUNT, CRGB(3, 2, 0));
+    fill_solid(fb, cfg::LED_COUNT, CRGB(5, 3, 1));
     const float sp = g.speed / 128.0f;
-    const uint8_t ringY[3] = {3, 8, 13};
-    for (uint8_t r = 0; r < 3; r++) {
-      uint8_t y = ringY[r];
-      for (uint8_t x = 0; x < 16; x++) {
-        if (((x + r * 2) & 3) != 0) continue;
-        // у каждой лампочки свой цвет, как в настоящей гирлянде
-        uint8_t h = (uint8_t)(x * 197 + r * 91);
+    // Восемь нитей через всю матрицу: лампочки в шахматном порядке,
+    // у каждой свой цвет, плюс мягкое свечение на соседних диодах нити.
+    for (uint8_t r = 0; r < 8; r++) {
+      const uint8_t y0 = (uint8_t)(1 + r * 2);
+      for (uint8_t j = 0; j < 8; j++) {
+        const uint8_t x = (uint8_t)((j * 2 + r) & 15);
+        const uint8_t y = (uint8_t)(y0 - ((j + r) & 1));  // лёгкий провис нити
+        uint8_t h = (uint8_t)(x * 197 + y * 89 + r * 61);
         h ^= (uint8_t)(h >> 4);
         h = (uint8_t)(h * 11);
-        CRGB bulb = GARLAND_PALETTE[(h >> 1) & 7];
-        uint8_t v = sin8((uint8_t)(int)(t * 45 * sp + x * 61 + r * 30));
-        uint8_t k = 90 + v / 2;
-        if (sin8((uint8_t)((int)(t * 90) + x * 33)) > 246) k = 255;
+        const CRGB bulb = GARLAND_PALETTE[(h >> 1) & 7];
+        const uint8_t ph = (uint8_t)(x * 61 + y * 23);
+        const uint8_t v = sin8((uint8_t)(int)(t * 40 * sp + ph));
+        uint8_t k = qadd8(135, v / 2);
+        if (sin8((uint8_t)((int)(t * 90) + ph * 3)) > 246) k = 255;
         fb[XY(x, y)] = scaled(bulb, k);
+        const CRGB glow = scaled(bulb, 90);
+        fb[XY((uint8_t)((x + 15) & 15), y)] += glow;
+        fb[XY((uint8_t)((x + 1) & 15), y)] += glow;
       }
     }
   }
@@ -345,6 +627,156 @@ class CandyEffect : public EffectBase {
         fb[XY(x, y)] = (v > 128) ? CRGB(235, 235, 240) : CRGB(210, 25, 40);
       }
     }
+  }
+};
+
+class ConfettiEffect : public EffectBase {
+  struct Piece {
+    float x;
+    float y;
+    float vy;
+    uint8_t hue;
+    uint8_t ph;
+  };
+  Piece ps[44];
+  bool init = false;
+
+ public:
+  ConfettiEffect() : EffectBase("confetti", "Конфетти", GRP_NY, false, true, true) {}
+  void render(CRGB* fb, float dt, float t) override {
+    if (!init) {
+      for (uint8_t i = 0; i < 44; i++) {
+        ps[i] = {random8(0, 160) / 10.0f, random8(0, 160) / 10.0f,
+                 1.6f + random8(0, 26) / 8.0f, random8(), random8()};
+      }
+      init = true;
+    }
+    fill_solid(fb, cfg::LED_COUNT, CRGB(2, 1, 3));
+    const float sp = 0.4f + g.speed / 128.0f;
+    const uint8_t ib = (uint8_t)(200 + g.intensity / 3);
+    for (uint8_t i = 0; i < 44; i++) {
+      Piece& p = ps[i];
+      p.y -= p.vy * dt * sp;
+      p.x += sinf(t * 2.1f + p.ph) * dt * 1.4f;
+      if (p.y < -1.0f) {
+        p.y = 16.4f;
+        p.x = random8(0, 160) / 10.0f;
+        p.hue = random8();
+      }
+      while (p.x < 0) p.x += 16.0f;
+      while (p.x >= 16.0f) p.x -= 16.0f;
+      const int xi = (int)p.x;
+      const int yi = (int)p.y;
+      if (yi < 0 || yi >= 16) continue;
+      const uint8_t tw = sin8((uint8_t)((int)(t * 100) + p.ph));
+      const uint8_t k = scale8(ib, (uint8_t)(165 + tw / 3));
+      const CRGB col = scaled(CHSV(p.hue, 215, 255), k);
+      fb[XY((uint8_t)xi, (uint8_t)yi)] = col;
+      if (yi + 1 < 16) fb[XY((uint8_t)xi, (uint8_t)(yi + 1))] = scaled(col, 140);
+    }
+  }
+};
+
+class SnakeEffect : public EffectBase {
+  uint8_t body[192];
+  uint8_t food = 0;
+  uint8_t len = 0;
+  uint8_t dir = 0;  // 0 вправо, 1 вниз, 2 влево, 3 вверх
+  float acc = 0;
+  bool init = false;
+
+  static uint8_t shifted(uint8_t cell, uint8_t d) {
+    uint8_t x = cell & 15, y = cell >> 4;
+    switch (d) {
+      case 0: x = (x + 1) & 15; break;
+      case 1: y = (y + 1) & 15; break;
+      case 2: x = (x + 15) & 15; break;
+      default: y = (y + 15) & 15; break;
+    }
+    return (uint8_t)(y * 16 + x);
+  }
+  bool inBody(uint8_t cell) const {
+    for (uint8_t i = 0; i < len; i++) {
+      if (body[i] == cell) return true;
+    }
+    return false;
+  }
+  void placeFood() {
+    for (uint8_t tries = 0; tries < 60; tries++) {
+      const uint8_t c = random8();
+      if (!inBody(c)) {
+        food = c;
+        return;
+      }
+    }
+    food = random8();
+  }
+  void reset() {
+    len = 5;
+    for (uint8_t i = 0; i < len; i++) body[i] = (uint8_t)(8 * 16 + 6 - i);
+    dir = 0;
+    placeFood();
+    acc = 0;
+  }
+  void moveStep() {
+    const uint8_t head = body[0];
+    const uint8_t fx = food & 15, fy = food >> 4;
+    int8_t best = -1;
+    uint16_t bestScore = 0xFFFF;
+    for (uint8_t d = 0; d < 4; d++) {
+      const uint8_t c = shifted(head, d);
+      if (inBody(c)) continue;
+      const uint8_t cx = c & 15, cy = c >> 4;
+      uint16_t score =
+          (uint16_t)ringDist(cx, fx) * 3 + (uint16_t)(cy > fy ? cy - fy : fy - cy) * 3;
+      if (d == ((dir + 2) & 3)) score += 8;  // не разворачиваться в шею
+      score += random8(0, 3);
+      if (score < bestScore) {
+        bestScore = score;
+        best = (int8_t)d;
+      }
+    }
+    if (best < 0) {
+      reset();
+      return;
+    }
+    dir = (uint8_t)best;
+    const uint8_t next = shifted(head, dir);
+    const bool grow = next == food && len < 192;
+    if (grow) len++;
+    memmove(body + 1, body, len - 1);
+    body[0] = next;
+    if (grow) {
+      placeFood();
+      if (len >= 190) reset();
+    }
+  }
+
+ public:
+  SnakeEffect() : EffectBase("snake", "Змейка", GRP_NY, false, true, true) {}
+  void enter() override { init = false; }
+  void render(CRGB* fb, float dt, float t) override {
+    if (!init) {
+      reset();
+      init = true;
+    }
+    const float rate = 3.0f + g.speed / 24.0f;
+    acc += dt * rate;
+    while (acc >= 1.0f) {
+      moveStep();
+      acc -= 1.0f;
+    }
+    fill_solid(fb, cfg::LED_COUNT, CRGB(2, 3, 8));
+    const uint8_t pulse = qadd8(180, sin8((uint8_t)((int)(t * 130))) / 4);
+    fb[food] = scaled(CRGB(255, 44, 50), pulse);
+    const uint8_t ib = (uint8_t)min(255.0f, 200.0f + g.intensity / 5);
+    for (int16_t i = (int16_t)len - 1; i > 0; i--) {
+      const uint8_t k =
+          scale8(ib, (uint8_t)(170 + (uint16_t)(len - 1 - i) * 85 / (len > 1 ? len - 1 : 1)));
+      const uint8_t hue = (uint8_t)(i * 9 + (int)(t * 40));
+      fb[body[i]] = scaled(CHSV(hue, 200, 255), k);
+    }
+    fb[body[0]] = scaled(CRGB(240, 255, 245), ib);
   }
 };
 
@@ -534,19 +966,31 @@ OceanEffect iOcean;
 StarfieldEffect iStars;
 RainbowEffect iRainbow;
 PlasmaEffect iPlasma;
+MatrixEffect iMatrix;
+HelixEffect iHelix;
+RingsEffect iRings;
+BeaconEffect iBeacon;
+LightningEffect iLightning;
+HypnoEffect iHypno;
+HeartbeatEffect iHeartbeat;
+BubblesEffect iBubbles;
 FireEffect iFire;
 SnowEffect iSnow;
 GarlandEffect iGarland;
 SpiralEffect iSpiral;
 CandyEffect iCandy;
+ConfettiEffect iConfetti;
+SnakeEffect iSnake;
 FireworksEffect iFireworks;
 ClockEffect iClock;
 NyCountdownEffect iNyCountdown;
 FireworksEffect iNyShow("nyshow", "Новогоднее шоу", true);
 
-EffectBase* REGISTRY[] = {&iSolid,     &iCandle,   &iBreathing,  &iAurora, &iOcean,
-                          &iStars,     &iRainbow,  &iPlasma,     &iFire,   &iSnow,
-                          &iGarland,   &iSpiral,   &iCandy,      &iFireworks, &iClock,
+EffectBase* REGISTRY[] = {&iSolid,   &iCandle,  &iBreathing,  &iAurora,    &iOcean,
+                          &iStars,   &iRainbow, &iPlasma,     &iMatrix,    &iHelix,
+                          &iRings,   &iBeacon,  &iLightning,  &iHypno,     &iHeartbeat,
+                          &iBubbles, &iFire,    &iSnow,       &iGarland,   &iSpiral,
+                          &iCandy,   &iConfetti, &iSnake,     &iFireworks, &iClock,
                           &iNyCountdown, &iNyShow};
 
 }  // namespace

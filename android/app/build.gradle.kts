@@ -13,8 +13,8 @@ android {
         applicationId = "com.denvisss.lampa"
         minSdk = 26
         targetSdk = 35
-        versionCode = 3
-        versionName = "1.2.0-pre1"
+        versionCode = 4
+        versionName = "1.3.0-pre1"
     }
 
     buildTypes {

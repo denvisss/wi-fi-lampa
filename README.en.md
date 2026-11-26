@@ -26,13 +26,14 @@
 
 ---
 
-**Wi-Fi Lamp** is a complete smart lamp project: a flexible 16×16 WS2812B matrix is wrapped around a tube, with an ESP8266 inside. The firmware renders 17 scenes, wakes you gently with a sunrise on schedule, shows the time as a scrolling marquee and greets the New Year with fireworks. Control it with the touch button, a Material 3 Android app or a web panel that lives right in the lamp's memory. Both the firmware and the app update straight from GitHub.
+**Wi-Fi Lamp** is a complete smart lamp project: a flexible 16×16 WS2812B matrix is wrapped around a tube, with an ESP8266 inside. The firmware renders 27 scenes, wakes you gently with a sunrise on schedule, shows the time as a scrolling marquee and greets the New Year with fireworks. Control it with the touch button, a Material 3 Android app or a web panel that lives right in the lamp's memory. Both the firmware and the app update straight from GitHub.
 
 ## Features
 
 **Light**
-- 17 effects: aurora, fireplace, ocean, starfall, plasma, garland, Christmas spiral, candy, fireworks, clock and more.
-- The garland looks like a real one: every bulb glows in its own warm color, twinkles and flashes.
+- 27 effects: aurora, fireplace, ocean, starfall, plasma, matrix rain, garland, Christmas spiral, candy, confetti, lightning, snake, fireworks, clock and more.
+- The garland looks like a real one: eight strings, 64 bulbs, each in its own palette color, with a soft glow on neighbouring LEDs.
+- New scenes: matrix rain, spinning helix, rings, beacon, lightning, confetti, hypno swirl, heartbeat, bubbles and auto-snake.
 - Cylindrical mapping: a seamless 16-pixel ring, calibration for serpentine, mirror, flip and offset.
 - Playlist with auto-switch every 5–60 minutes, global brightness and an accent color.
 - Gamma correction, configurable power-supply current limit (9 A by default) and smooth crossfades.
@@ -161,7 +162,7 @@ Detailed instructions, drivers and split flashing (`firmware.bin` + `littlefs.bi
 
 ### 3. Open the web panel
 
-`http://lampa.local` in a browser, or the lamp's IP from the router's client list. Sections: "Overview" — effect, brightness, color; "Effects" — the 17-scene catalog; "Alarm" — sunrises; "Clock" — time, time zone and manual setting; "Settings" — matrix calibration, current limit, Wi-Fi and updates.
+`http://lampa.local` in a browser, or the lamp's IP from the router's client list. Sections: "Overview" — effect, brightness, color; "Effects" — the 27-scene catalog; "Alarm" — sunrises; "Clock" — time, time zone and manual setting; "Settings" — matrix calibration, current limit, Wi-Fi and updates.
 
 ### 4. Connect the app
 
@@ -276,7 +277,7 @@ WebSocket `ws://lampa.local:81/` delivers state, sunrise progress, OTA progress 
 
 ## Status
 
-Version 1.2.0-pre1 runs on a real lamp: Wi-Fi, clock with manual setting and all time zones, matrix calibration, current limiting, GitHub updates and EEPROM settings restore after filesystem formatting are verified on hardware. The web panel is tested in Chrome against the live lamp — from 390 px to desktop; the Android app is built and tested on an emulator against the live lamp: screens, live preview, alarms, clock and updates work.
+Version 1.3.0-pre1 runs on a real lamp: Wi-Fi, clock with manual setting and all time zones, matrix calibration, current limiting, GitHub updates and EEPROM settings restore after filesystem formatting are verified on hardware. The web panel is tested in Chrome against the live lamp — from 390 px to desktop; the Android app is built and tested on an emulator against the live lamp: screens, live preview, alarms, clock and updates work.
 
 ## License
 
