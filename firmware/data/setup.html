@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Настройка лампы</title>
+<meta name="theme-color" content="#141310">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23141310'/%3E%3Ccircle cx='32' cy='30' r='12' fill='%23FFB066'/%3E%3Crect x='26' y='44' width='12' height='6' rx='2' fill='%23FFB066'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #f7f5f0; --surface: #fffdf9; --ink: #211d18; --muted: #857b6e;
+    --line: #e7e0d4; --accent: #f0a35e; --accent-ink: #402600;
+    --grad: linear-gradient(120deg, #ffcf8a, #ff9d5c 55%, #f2734d);
+    --shadow: 0 24px 70px -30px rgba(60, 38, 10, .35);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #12100d; --surface: #1b1813; --ink: #f4efe6; --muted: #9c9284; --line: #2c261e; --accent: #ffb066; --accent-ink: #241100; --shadow: 0 30px 80px -30px rgba(0,0,0,.7); }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    font: 15px/1.5 -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background:
+      radial-gradient(1000px 500px at 85% -10%, rgba(255, 176, 102, .22), transparent 60%),
+      radial-gradient(800px 500px at 0% 110%, rgba(241, 115, 77, .12), transparent 55%),
+      var(--bg);
+    color: var(--ink); display: grid; place-items: center; padding: 28px 16px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .card {
+    width: min(460px, 100%); background: var(--surface); border: 1px solid var(--line);
+    border-radius: 26px; padding: 30px; box-shadow: var(--shadow);
+  }
+  .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; }
+  .dot {
+    width: 40px; height: 40px; border-radius: 50%; background: var(--grad);
+    box-shadow: 0 0 0 5px rgba(240, 163, 94, .14), 0 0 28px rgba(255, 157, 92, .55);
+  }
+  .brand strong { font-size: 19px; letter-spacing: -.02em; }
+  .brand span { display: block; color: var(--muted); font-size: 12.5px; margin-top: 1px; }
+  h1 { font-size: 22px; letter-spacing: -.02em; margin: 0 0 6px; }
+  p { color: var(--muted); margin: 0 0 22px; font-size: 13.5px; }
+  label { font-size: 12px; font-weight: 650; color: var(--muted); display: block; margin: 14px 0 6px; text-transform: uppercase; letter-spacing: .06em; }
+  .field { position: relative; }
+  input {
+    width: 100%; padding: 13px 14px; border-radius: 14px; border: 1px solid var(--line);
+    background: color-mix(in srgb, var(--bg) 60%, var(--surface)); color: var(--ink);
+    font-size: 15px; outline: none; transition: border-color .15s, box-shadow .15s;
+  }
+  input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(240, 163, 94, .16); }
+  .btn {
+    width: 100%; margin-top: 22px; padding: 14px; border: none; border-radius: 15px;
+    background: var(--ink); color: var(--bg); font-size: 15px; font-weight: 700;
+    cursor: pointer; transition: transform .1s, opacity .15s;
+  }
+  .btn:active { transform: scale(.985); }
+  .btn:disabled { opacity: .55; cursor: default; }
+  .btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); margin-top: 10px; }
+  .nets { margin-top: 10px; display: none; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; max-height: 220px; overflow-y: auto; }
+  .nets.show { display: block; }
+  .net {
+    display: flex; justify-content: space-between; align-items: center; gap: 10px;
+    padding: 11px 14px; cursor: pointer; font-size: 14px; background: transparent; border: none;
+    width: 100%; text-align: left; color: var(--ink); border-bottom: 1px solid var(--line);
+  }
+  .net:last-child { border-bottom: none; }
+  .net:hover { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+  .net small { color: var(--muted); font-variant-numeric: tabular-nums; }
+  .msg { margin-top: 16px; font-size: 13.5px; border-radius: 13px; padding: 12px 14px; display: none; }
+  .msg.show { display: block; }
+  .msg.ok { background: rgba(89, 227, 167, .12); color: #1c7a55; }
+  .msg.err { background: rgba(255, 46, 99, .1); color: #b3233f; }
+  .spin { display: inline-block; width: 14px; height: 14px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin .7s linear infinite; vertical-align: -2px; margin-right: 6px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .hint { margin-top: 18px; font-size: 12px; color: var(--muted); text-align: center; }
+  .hint b { color: var(--ink); font-weight: 650; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="brand">
+      <span class="dot"></span>
+      <div><strong>Лампа</strong><span>первичная настройка Wi-Fi</span></div>
+    </div>
+    <h1>Подключите лампу к сети</h1>
+    <p>Укажите ваш домашний Wi-Fi — лампа сохранит сеть и перезагрузится. После этого управление доступно по адресу <b>lampa.local</b>.</p>
+
+    <form id="form">
+      <div class="field">
+        <label for="ssid">Сеть</label>
+        <input id="ssid" name="ssid" placeholder="Имя сети" autocomplete="off" required>
+      </div>
+      <button type="button" class="btn ghost" id="scan">Найти сети</button>
+      <div class="nets" id="nets"></div>
+
+      <div class="field">
+        <label for="pass">Пароль</label>
+        <input id="pass" name="pass" type="password" placeholder="Пароль Wi-Fi" autocomplete="off">
+      </div>
+
+      <button type="submit" class="btn" id="submit">Подключить</button>
+    </form>
+
+    <div class="msg" id="msg"></div>
+    <p class="hint">Если сеть не появилась — откройте <b>192.168.4.1</b> заново<br>и проверьте пароль.</p>
+  </div>
+
+<script>
+  const $ = (s) => document.querySelector(s);
+  const msg = (text, ok) => {
+    const el = $("#msg");
+    el.textContent = text;
+    el.className = "msg show " + (ok ? "ok" : "err");
+  };
+
+  $("#scan").addEventListener("click", async () => {
+    const btn = $("#scan");
+    btn.disabled = true;
+    btn.textContent = "Сканирую…";
+    try {
+      const res = await fetch("/api/scan");
+      const nets = await res.json();
+      const box = $("#nets");
+      box.innerHTML = nets.map((n) =>
+        `<button type="button" class="net" data-ssid="${encodeURIComponent(n.ssid)}">
+           <span>${n.ssid || "(скрытая сеть)"}</span>
+           <small>${n.secure ? "защищена · " : ""}${n.rssi} dBm</small>
+         </button>`).join("");
+      box.classList.toggle("show", nets.length > 0);
+      box.onclick = (ev) => {
+        const b = ev.target.closest(".net");
+        if (!b) return;
+        $("#ssid").value = decodeURIComponent(b.dataset.ssid);
+        $("#pass").focus();
+      };
+      if (!nets.length) msg("Сети не найдены. Попробуйте ещё раз.", false);
+    } catch {
+      msg("Не удалось получить список сетей.", false);
+    }
+    btn.disabled = false;
+    btn.textContent = "Найти сети";
+  });
+
+  $("#form").addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    const ssid = $("#ssid").value.trim();
+    const pass = $("#pass").value;
+    if (!ssid) return msg("Укажите имя сети.", false);
+    const btn = $("#submit");
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spin"></span>Подключаю…';
+    try {
+      const res = await fetch("/api/wifi", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ssid, pass }),
+      });
+      if (!res.ok) throw new Error();
+      msg("Сеть сохранена. Лампа перезагружается — через полминуты откройте lampa.local.", true);
+      $("#form").style.opacity = ".45";
+      $("#form").style.pointerEvents = "none";
+    } catch {
+      btn.disabled = false;
+      btn.textContent = "Подключить";
+      msg("Не удалось сохранить сеть. Попробуйте ещё раз.", false);
+    }
+  });
+</script>
+</body>
+</html>

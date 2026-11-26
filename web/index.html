@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Лампа</title>
+<meta name="theme-color" content="#F7F5F0">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23141310'/%3E%3Ccircle cx='32' cy='30' r='12' fill='%23FFB066'/%3E%3Crect x='26' y='44' width='12' height='6' rx='2' fill='%23FFB066'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <a class="brand" href="#/">
+      <span class="brand-mark"><span class="brand-glow"></span></span>
+      <span class="brand-name">Лампа</span>
+    </a>
+    <nav class="nav" id="nav">
+      <a href="#/" data-route="overview">Обзор</a>
+      <a href="#/effects" data-route="effects">Эффекты</a>
+      <a href="#/alarm" data-route="alarm">Будильник</a>
+      <a href="#/clock" data-route="clock">Часы</a>
+      <a href="#/settings" data-route="settings">Настройки</a>
+    </nav>
+    <div class="top-actions">
+      <span class="status-chip offline" id="conn-chip"><span class="dot"></span><span id="conn-text">Подключение</span></span>
+      <button class="icon-btn" id="theme-btn" aria-label="Переключить тему"></button>
+    </div>
+  </header>
+
+  <main id="view" class="view" aria-live="polite"></main>
+
+  <div id="sunrise-banner" class="sunrise-banner hidden">
+    <div class="sunrise-info">
+      <span class="sunrise-icon"></span>
+      <div>
+        <strong id="sunrise-title">Рассвет</strong>
+        <span id="sunrise-sub">плавное пробуждение</span>
+      </div>
+    </div>
+    <div class="sunrise-progress"><span id="sunrise-bar"></span></div>
+    <div class="sunrise-actions">
+      <button class="btn ghost" id="sunrise-snooze">+9 мин</button>
+      <button class="btn dark" id="sunrise-stop">Стоп</button>
+    </div>
+  </div>
+
+  <div class="toast-stack" id="toasts"></div>
+</div>
+<script src="/app.js"></script>
+</body>
+</html>

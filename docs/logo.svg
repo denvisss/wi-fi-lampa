@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" role="img" aria-label="Лампа">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#241d15"/>
+      <stop offset="1" stop-color="#120f0b"/>
+    </linearGradient>
+    <linearGradient id="tube" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFE9D2"/>
+      <stop offset=".45" stop-color="#FFB066"/>
+      <stop offset="1" stop-color="#F2734D"/>
+    </linearGradient>
+    <radialGradient id="halo" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#FFB066" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#FFB066" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="96" height="96" rx="24" fill="url(#bg)"/>
+  <rect width="96" height="96" rx="24" fill="none" stroke="#ffffff" stroke-opacity=".08"/>
+  <circle cx="48" cy="48" r="34" fill="url(#halo)"/>
+  <rect x="35" y="18" width="26" height="60" rx="13" fill="url(#tube)"/>
+  <g stroke="#17120c" stroke-opacity=".38" stroke-width="1.6">
+    <line x1="35" y1="28" x2="61" y2="28"/>
+    <line x1="35" y1="37" x2="61" y2="37"/>
+    <line x1="35" y1="46" x2="61" y2="46"/>
+    <line x1="35" y1="55" x2="61" y2="55"/>
+    <line x1="35" y1="64" x2="61" y2="64"/>
+  </g>
+</svg>

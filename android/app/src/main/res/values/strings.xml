@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Лампа</string>
+    <string name="widget_name">Лампа</string>
+    <string name="widget_desc">Питание и статус лампы</string>
+</resources>

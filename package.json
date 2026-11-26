@@ -1,0 +1,13 @@
+{
+  "name": "lampa",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "mock": "node web/mock-server.mjs",
+    "embed": "node tools/embed-web.mjs"
+  },
+  "dependencies": {
+    "puppeteer-core": "^25.19.0",
+    "ws": "^8.23.0"
+  }
+}

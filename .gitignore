@@ -1,0 +1,37 @@
+# PlatformIO
+firmware/.pio/
+firmware/.vscode/
+*.pio
+
+# Node / web
+web/node_modules/
+node_modules/
+web/package-lock.json
+
+# Локальные артефакты
+.shot-app.png
+.shots*.png
+.ui.xml
+.tz-zones.csv
+
+# Android
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/.kotlin/
+*.apk
+*.aab
+
+# Локальные тулчейны
+.tools/
+.android-sdk/
+.gradle-home/
+
+# OS
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Логи
+*.log

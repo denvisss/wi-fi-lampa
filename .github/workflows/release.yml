@@ -1,0 +1,73 @@
+name: release
+
+on:
+  push:
+    paths:
+      - "release/*.json"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read release marker
+        id: marker
+        run: |
+          node <<'EOF'
+          const fs = require("fs");
+          const file = fs.readdirSync("release").filter((f) => f.endsWith(".json")).sort().pop();
+          const m = JSON.parse(fs.readFileSync("release/" + file, "utf8"));
+          const out = process.env.GITHUB_OUTPUT;
+          fs.appendFileSync(out, `tag=${m.tag}\n`);
+          fs.appendFileSync(out, `name=${m.name || m.tag}\n`);
+          fs.appendFileSync(out, `prerelease=${m.prerelease ? "true" : "false"}\n`);
+          fs.appendFileSync(out, `body<<RELEASE_EOF\n${m.body}\nRELEASE_EOF\n`);
+          EOF
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Build web UI
+        run: |
+          npm ci
+          npm run embed
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build firmware
+        run: |
+          pip install platformio
+          pio run -d firmware
+          cp firmware/.pio/build/lampa/firmware.bin firmware.bin
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Build Android app
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+          cp app/build/outputs/apk/debug/app-debug.apk ../lampa-android.apk
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.marker.outputs.tag }}
+          name: ${{ steps.marker.outputs.name }}
+          body: ${{ steps.marker.outputs.body }}
+          prerelease: ${{ steps.marker.outputs.prerelease == 'true' }}
+          files: |
+            firmware.bin
+            lampa-android.apk
+          fail_on_unmatched_files: true
