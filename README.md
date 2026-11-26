@@ -14,7 +14,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/github/v/release/denvisss/wi-fi-lampa?style=flat-square&label=release&color=59E3A7" alt="Release">
+  <img src="https://img.shields.io/github/v/release/denvisss/wi-fi-lampa?include_prereleases&style=flat-square&label=release&color=59E3A7" alt="Release">
   <img src="https://img.shields.io/badge/PlatformIO-ESP8266-E7352C?style=flat-square&logo=platformio&logoColor=white" alt="PlatformIO">
   <img src="https://img.shields.io/badge/FastLED-3.7-FF6B35?style=flat-square" alt="FastLED">
   <img src="https://img.shields.io/badge/Android-8.0%2B-3DDC84?style=flat-square&logo=android&logoColor=white" alt="Android">
