@@ -1,0 +1,6 @@
+{
+  "tag": "v1.3.0",
+  "name": "v1.3.0",
+  "prerelease": false,
+  "body": "## Русский\n\n- 10 новых сцен: матричный дождь, спираль, кольца, маяк, молния, конфетти, гипноз, сердцебиение, пузырьки и авто-змейка\n- Гирлянда стала плотной: 8 нитей и 64 лампочки вместо 12, у каждой свой цвет и мягкое свечение на соседних диодах\n- Новые эффекты используют целочисленную математику и общие буферы — память и FPS в порядке\n- Android-приложение 1.3.0: обложки новых эффектов, название сцены в виджете\n\n## English\n\n- 10 new scenes: matrix rain, helix, rings, beacon, lightning, confetti, hypno swirl, heartbeat, bubbles and auto-snake\n- The garland is now dense: 8 strings and 64 bulbs instead of 12, each with its own color and a soft glow on neighbouring LEDs\n- New effects use integer math and shared buffers — memory and FPS stay healthy\n- Android app 1.3.0: artwork for the new effects, effect name in the widget\n"
+}

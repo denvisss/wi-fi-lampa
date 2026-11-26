@@ -136,7 +136,7 @@ pio device monitor
 Ожидаемый лог при первом запуске:
 
 ```
-[lampa] fw 1.3.0-pre1, reset reason: Power on
+[lampa] fw 1.3.0, reset reason: Power on
 [net] starting setup AP
 [net] AP 'Lampa-Setup' up ip=192.168.4.1 mac=...
 [lampa] ready: connect to 'Lampa-Setup', open http://192.168.4.1

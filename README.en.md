@@ -277,7 +277,7 @@ WebSocket `ws://lampa.local:81/` delivers state, sunrise progress, OTA progress 
 
 ## Status
 
-Version 1.3.0-pre1 runs on a real lamp: Wi-Fi, clock with manual setting and all time zones, matrix calibration, current limiting, GitHub updates and EEPROM settings restore after filesystem formatting are verified on hardware. The web panel is tested in Chrome against the live lamp — from 390 px to desktop; the Android app is built and tested on an emulator against the live lamp: screens, live preview, alarms, clock and updates work.
+Version 1.3.0 runs on a real lamp: Wi-Fi, clock with manual setting and all time zones, matrix calibration, current limiting, GitHub updates and EEPROM settings restore after filesystem formatting are verified on hardware. The web panel is tested in Chrome against the live lamp — from 390 px to desktop; the Android app is built and tested on an emulator against the live lamp: screens, live preview, alarms, clock and updates work.
 
 ## License
 

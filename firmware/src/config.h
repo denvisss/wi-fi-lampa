@@ -15,7 +15,7 @@ constexpr uint16_t MIN_CURRENT_LIMIT_MA = 500;
 constexpr uint16_t MAX_CURRENT_LIMIT_MA = 15000;  // 256 LED × 60 мА ≈ 15.4 А
 constexpr uint16_t LED_MA_FULL = 60;
 
-constexpr const char* FW_VERSION = "1.3.0-pre1";
+constexpr const char* FW_VERSION = "1.3.0";
 constexpr const char* GH_REPO = "denvisss/wi-fi-lampa";
 constexpr const char* GH_FW_ASSET = "firmware.bin";
 constexpr const char* HOSTNAME = "lampa";
